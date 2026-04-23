@@ -6,6 +6,8 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
+LABEL org.opencontainers.image.source="https://github.com/gateszhangc/chinaplas"
+
 COPY assets ./assets
 COPY index.html ./index.html
 COPY robots.txt ./robots.txt
