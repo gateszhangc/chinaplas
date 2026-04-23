@@ -1,19 +1,21 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: chinaplas-web
+  name: chinaplas-www-redirect
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     cert-manager.io/issue-temporary-certificate: "true"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/permanent-redirect: https://chinaplas.lol
+    nginx.ingress.kubernetes.io/permanent-redirect-code: "308"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - chinaplas.lol
-      secretName: chinaplas-lol-tls
+        - www.chinaplas.lol
+      secretName: chinaplas-www-tls
   rules:
-    - host: chinaplas.lol
+    - host: www.chinaplas.lol
       http:
         paths:
           - path: /
