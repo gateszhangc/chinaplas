@@ -13,4 +13,4 @@ labels:
 images:
   - name: registry.144.91.77.245.sslip.io/chinaplas
     newName: registry.144.91.77.245.sslip.io/chinaplas
-    newTag: 13c930b2c023d4db196354176a3fcd41a6fdff35
+    newTag: 62c0157a5149af622df92d828d8c597097a733eb
