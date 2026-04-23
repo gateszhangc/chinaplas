@@ -2,13 +2,13 @@
 
 ## 仓库内发布链路
 
-`main` 推送 -> GitHub Actions `release.yml` -> K8s Kaniko Job -> GHCR -> 回写 `deploy/overlays/prod/kustomization.yaml` -> ArgoCD 自动同步。
+`main` 推送 -> GitHub Actions `release.yml` -> K8s Kaniko Job -> registry.144.91.77.245.sslip.io -> 回写 `deploy/overlays/prod/kustomization.yaml` -> ArgoCD 自动同步。
 
 ## 必需的 GitHub Secrets
 
 - `KUBECONFIG_B64`
 
-镜像默认推送到 `ghcr.io/gateszhangc/chinaplas-site`，依赖 Actions 自带 `GITHUB_TOKEN`。
+镜像默认推送到 `registry.144.91.77.245.sslip.io/chinaplas`，构建和运行统一复用集群内稳定的 `registry-push` 凭据副本。
 
 ## Cloudflare 与 Porkbun
 

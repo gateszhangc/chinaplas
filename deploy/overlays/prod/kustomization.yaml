@@ -11,6 +11,6 @@ labels:
       app.kubernetes.io/environment: production
 
 images:
-  - name: ghcr.io/gateszhangc/chinaplas-site
-    newName: ghcr.io/gateszhangc/chinaplas-site
+  - name: registry.144.91.77.245.sslip.io/chinaplas
+    newName: registry.144.91.77.245.sslip.io/chinaplas
     newTag: 9a180baf7011c4f46a8bdb9c8f19ae3489a57b57

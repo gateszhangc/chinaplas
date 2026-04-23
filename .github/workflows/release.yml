@@ -10,7 +10,6 @@ on:
 
 permissions:
   contents: write
-  packages: write
 
 concurrency:
   group: chinaplas-release
@@ -19,6 +18,11 @@ concurrency:
 env:
   NAMESPACE: chinaplas-prod
   KUSTOMIZATION_FILE: deploy/overlays/prod/kustomization.yaml
+  REGISTRY_HOST: registry.144.91.77.245.sslip.io
+  REGISTRY_REPOSITORY: chinaplas
+  REGISTRY_SECRET_SOURCE_NAMESPACE: build-jobs
+  REGISTRY_SECRET_SOURCE_NAME: registry-push
+  TARGET_REGISTRY_SECRET_NAME: registry-credentials
 
 jobs:
   release:
@@ -47,20 +51,22 @@ jobs:
         id: meta
         run: |
           IMAGE_TAG="${GITHUB_SHA}"
-          IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY_OWNER}/chinaplas-site"
+          IMAGE_NAME="${REGISTRY_HOST}/${REGISTRY_REPOSITORY}"
           JOB_NAME="chinaplas-build-${GITHUB_SHA::12}"
           echo "image_tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
           echo "image_name=${IMAGE_NAME}" >> "$GITHUB_OUTPUT"
           echo "job_name=${JOB_NAME}" >> "$GITHUB_OUTPUT"
 
-      - name: Ensure namespace and pull secrets exist
+      - name: Ensure namespace and registry secrets exist
         run: |
           kubectl create namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
-          kubectl -n "$NAMESPACE" create secret docker-registry registry-credentials \
-            --docker-server="ghcr.io" \
-            --docker-username="${{ github.actor }}" \
-            --docker-password="${{ github.token }}" \
-            --dry-run=client -o yaml | kubectl apply -f -
+          kubectl -n "$REGISTRY_SECRET_SOURCE_NAMESPACE" get secret "$REGISTRY_SECRET_SOURCE_NAME" -o json \
+            | jq --arg namespace "$NAMESPACE" --arg name "$TARGET_REGISTRY_SECRET_NAME" '
+                .metadata.namespace = $namespace
+                | .metadata.name = $name
+                | del(.metadata.uid, .metadata.resourceVersion, .metadata.creationTimestamp, .metadata.annotations, .metadata.ownerReferences, .metadata.managedFields)
+              ' \
+            | kubectl apply -f -
           kubectl -n "$NAMESPACE" create secret generic git-clone-token \
             --from-literal=token="${{ github.token }}" \
             --dry-run=client -o yaml | kubectl apply -f -
