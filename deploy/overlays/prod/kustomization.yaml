@@ -13,4 +13,4 @@ labels:
 images:
   - name: ghcr.io/gateszhangc/chinaplas-site
     newName: ghcr.io/gateszhangc/chinaplas-site
-    newTag: 2b7e9e70ce8b27ceb19bb21cf5a8211c08552eba
+    newTag: 9a180baf7011c4f46a8bdb9c8f19ae3489a57b57
