@@ -8,7 +8,7 @@
 
 - `KUBECONFIG_B64`
 
-镜像默认推送到 `ghcr.io/gateszhangc/chinaplas`，依赖 Actions 自带 `GITHUB_TOKEN`。
+镜像默认推送到 `ghcr.io/gateszhangc/chinaplas-site`，依赖 Actions 自带 `GITHUB_TOKEN`。
 
 ## Cloudflare 与 Porkbun
 

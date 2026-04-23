@@ -17,7 +17,7 @@ spec:
         - name: registry-credentials
       containers:
         - name: web
-          image: ghcr.io/gateszhangc/chinaplas:bootstrap
+          image: ghcr.io/gateszhangc/chinaplas-site:bootstrap
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
