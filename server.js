@@ -12,13 +12,10 @@ const contentTypes = {
   ".ico": "image/x-icon",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
-  ".manifest": "application/manifest+json; charset=utf-8",
   ".png": "image/png",
   ".svg": "image/svg+xml",
   ".txt": "text/plain; charset=utf-8",
-  ".ttf": "font/ttf",
   ".webmanifest": "application/manifest+json; charset=utf-8",
-  ".webp": "image/webp",
   ".xml": "application/xml; charset=utf-8"
 };
 
@@ -38,12 +35,12 @@ const serveFile = (requestPath, response) => {
 
   fs.readFile(resolvedPath, (error, body) => {
     if (error) {
-      if (error.code === "ENOENT") {
-        send(response, 404, { "Content-Type": "text/plain; charset=utf-8" }, "Not Found");
-        return;
-      }
-
-      send(response, 500, { "Content-Type": "text/plain; charset=utf-8" }, "Internal Server Error");
+      send(
+        response,
+        error.code === "ENOENT" ? 404 : 500,
+        { "Content-Type": "text/plain; charset=utf-8" },
+        error.code === "ENOENT" ? "Not Found" : "Internal Server Error"
+      );
       return;
     }
 

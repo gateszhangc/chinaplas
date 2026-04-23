@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: chinaplas-prod
+
+resources:
+  - ../../base
+
+labels:
+  - pairs:
+      app.kubernetes.io/environment: production
+
+images:
+  - name: ghcr.io/gateszhangc/chinaplas
+    newName: ghcr.io/gateszhangc/chinaplas
+    newTag: bootstrap

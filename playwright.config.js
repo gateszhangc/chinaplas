@@ -1,4 +1,6 @@
-const { defineConfig } = require("@playwright/test");
+const { defineConfig, devices } = require("@playwright/test");
+
+const externalBaseUrl = process.env.PLAYWRIGHT_BASE_URL;
 
 module.exports = defineConfig({
   testDir: "./tests",
@@ -7,13 +9,25 @@ module.exports = defineConfig({
     timeout: 5_000
   },
   use: {
-    baseURL: "http://127.0.0.1:4174",
+    baseURL: externalBaseUrl || "http://127.0.0.1:4174",
     trace: "on-first-retry"
   },
-  webServer: {
-    command: "PORT=4174 node server.js",
-    url: "http://127.0.0.1:4174",
-    reuseExistingServer: false,
-    timeout: 120_000
-  }
+  projects: [
+    {
+      name: "chromium-desktop",
+      use: { ...devices["Desktop Chrome"] }
+    },
+    {
+      name: "chromium-mobile",
+      use: { ...devices["Pixel 7"] }
+    }
+  ],
+  webServer: externalBaseUrl
+    ? undefined
+    : {
+        command: "PORT=4174 node server.js",
+        url: "http://127.0.0.1:4174",
+        reuseExistingServer: false,
+        timeout: 120_000
+      }
 });

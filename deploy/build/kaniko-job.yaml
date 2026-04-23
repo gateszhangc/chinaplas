@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: __JOB_NAME__
+  namespace: __NAMESPACE__
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 900
+  template:
+    spec:
+      restartPolicy: Never
+      volumes:
+        - name: workspace
+          emptyDir: {}
+        - name: docker-config
+          secret:
+            secretName: registry-credentials
+            items:
+              - key: .dockerconfigjson
+                path: config.json
+      initContainers:
+        - name: fetch-source
+          image: alpine/git:2.45.2
+          env:
+            - name: GIT_CLONE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: git-clone-token
+                  key: token
+          command:
+            - /bin/sh
+            - -lc
+          args:
+            - |
+              git clone --no-checkout "https://x-access-token:${GIT_CLONE_TOKEN}@github.com/__GITHUB_REPOSITORY__.git" /workspace
+              cd /workspace
+              git fetch --depth 1 origin "__GIT_REF__"
+              git checkout "__GIT_REF__"
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+      containers:
+        - name: kaniko
+          image: gcr.io/kaniko-project/executor:v1.23.2-debug
+          args:
+            - --context=/workspace
+            - --dockerfile=/workspace/Dockerfile
+            - --destination=__IMAGE_NAME__
+            - --cache=true
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+            - name: docker-config
+              mountPath: /kaniko/.docker
